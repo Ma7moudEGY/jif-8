@@ -14,16 +14,11 @@ public class SubInstruction8XY5 extends Instruction {
     @Override
     public void execute() {
         // Implementation will subtract VY from VX, set VF = NOT borrow
-        byte valueX = cpu.getRegisters().getRegister(registerX);
-        byte valueY = cpu.getRegisters().getRegister(registerY);
+        int valueX = cpu.getRegisters().getRegister(registerX) & 0xFF; // Ensure VX is 0-255
+        int valueY = cpu.getRegisters().getRegister(registerY) & 0xFF; // Ensure VY is 0-255
 
-        if (valueX >= valueY)
-            cpu.getRegisters().setRegister(15, (byte) 1);
-        
-        else
-            cpu.getRegisters().setRegister(15, (byte) 0);
-
-        cpu.getRegisters().setRegister(registerX, (byte) (valueX - valueY));
+        cpu.getRegisters().setRegister(0xF, (valueX >= valueY) ? 1 : 0); // VF = 1 if VX >= VY (no borrow), 0 otherwise
+        cpu.getRegisters().setRegister(registerX, valueX - valueY); // Result is masked by setRegister
     }
 
     @Override

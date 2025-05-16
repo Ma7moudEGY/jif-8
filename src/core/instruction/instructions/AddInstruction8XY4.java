@@ -14,16 +14,12 @@ public class AddInstruction8XY4 extends Instruction {
     @Override
     public void execute() {
         // Implementation will add VY to VX, set VF = carry
-        byte valueX = cpu.getRegisters().getRegister(registerX);
-        byte valueY = cpu.getRegisters().getRegister(registerY);
+        int valueX = cpu.getRegisters().getRegister(registerX) & 0xFF; // Ensure VX is 0-255
+        int valueY = cpu.getRegisters().getRegister(registerY) & 0xFF; // Ensure VY is 0-255
 
-        if (valueX > Byte.MAX_VALUE - valueY)
-            cpu.getRegisters().setRegister(15, (byte) 1);
-        
-        else
-            cpu.getRegisters().setRegister(15, (byte) 0);
-
-        cpu.getRegisters().setRegister(registerX, (byte) (valueX + valueY));
+        int sum = valueX + valueY;
+        cpu.getRegisters().setRegister(0xF, (sum > 0xFF) ? 1 : 0); // Set VF if carry (sum > 255)
+        cpu.getRegisters().setRegister(registerX, sum); // Result is masked to 0xFF by setRegister
     }
 
     @Override

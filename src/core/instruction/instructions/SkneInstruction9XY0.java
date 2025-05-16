@@ -14,12 +14,12 @@ public class SkneInstruction9XY0 extends Instruction {
     @Override
     public void execute() {
         // Implementation will skip next instruction if VX not equals VY
-        byte valueX = cpu.getRegisters().getRegister(registerX);
-        byte valueY = cpu.getRegisters().getRegister(registerY);
-        int PC = cpu.getPC();
+        int valueX = cpu.getRegisters().getRegister(registerX);
+        int valueY = cpu.getRegisters().getRegister(registerY);
 
-        if (valueX != valueY)
-            cpu.setPC(PC + 2);
+        if (valueX != valueY) {
+            cpu.skipNextInstruction();
+        }
     }
 
     @Override

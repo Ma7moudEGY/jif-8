@@ -31,16 +31,19 @@ public class Display {
     }
 
     public void setPixel(int x, int y, boolean value) {
-        if (x < height && x >= 0 && y < width && y >= 0) {
+        // Assumes x is 0 to width-1, y is 0 to height-1.
+        // Callers (like SpriteInstruction) are responsible for wrapping coordinates.
+        if (x >= 0 && x < width && y >= 0 && y < height) {
             pixels[x][y] = value;
         }
     }
 
     public boolean getPixel(int x, int y) {
-        if (x < width && x >= 0 && y < height && y >= 0) {
+        // Assumes x is 0 to width-1, y is 0 to height-1.
+        if (x >= 0 && x < width && y >= 0 && y < height) {
             return pixels[x][y];
         }
-        throw new IndexOutOfBoundsException("Invalid Pixel Coordinates");
+        return false; // Default for out-of-bounds, should ideally not be hit if caller wraps.
     }
 
     public boolean[][] getDisplayBuffer() {

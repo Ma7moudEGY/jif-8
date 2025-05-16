@@ -14,12 +14,12 @@ public class SkeqInstruction5XY0 extends Instruction {
     @Override
     public void execute() {
         // Implementation will skip next instruction if VX not equals VY
-        byte valueX = cpu.getRegisters().getRegister(rX);
-        byte valueY = cpu.getRegisters().getRegister(rY);
-        int PC = cpu.getPC();
+        int valueX = cpu.getRegisters().getRegister(rX);
+        int valueY = cpu.getRegisters().getRegister(rY);
 
-        if (valueX == valueY)
-            cpu.setPC(PC + 2);
+        if (valueX == valueY) {
+            cpu.skipNextInstruction();
+        }
     }
 
     @Override

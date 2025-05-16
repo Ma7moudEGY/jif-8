@@ -11,14 +11,19 @@ public class AdiInstructionFX1E extends Instruction {
 
     @Override
     public void execute() {
-        int value = cpu.getRegisters().getRegister(register) & 0xFF;
-        int index = cpu.getI() & 0xFFFF;
+        int valueVx = cpu.getRegisters().getRegister(register) & 0xFF; // VX is 8-bit
+        int valueI = cpu.getI() & 0xFFF; // I is 12-bit for addressing
 
-        int res = (value + index);
-        byte carryFlag = (res > 0xFFFF ? (byte)1 : (byte)0);
+        int sum = valueI + valueVx;
 
-        cpu.setI((char) (res& 0xFFFF));
-        cpu.getRegisters().setRegister(0xF, carryFlag);
+        // According to Cowgod's spec: "VF is set to 1 when range overflow (I+VX>0xFFF), and 0 when not."
+        // This refers to the 12-bit nature of I.
+        if (sum > 0xFFF) {
+            cpu.getRegisters().setRegister(0xF, 1);
+        } else {
+            cpu.getRegisters().setRegister(0xF, 0);
+        }
+        cpu.setI((char)sum); // cpu.setI() will mask the result to 0xFFF
     }
 
     @Override

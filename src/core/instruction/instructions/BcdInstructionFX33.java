@@ -11,7 +11,7 @@ public class BcdInstructionFX33 extends Instruction {
 
     @Override
     public void execute() {
-        byte value = cpu.getRegisters().getRegister(register);
+        int value = cpu.getRegisters().getRegister(register);
 
         byte hundreds = (byte) (value / 100);
         byte tens = (byte) ((value / 10) % 10);

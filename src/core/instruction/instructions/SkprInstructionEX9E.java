@@ -11,10 +11,10 @@ public class SkprInstructionEX9E extends Instruction {
 
     @Override
     public void execute() {        
-        byte key = cpu.getRegisters().getRegister(register);
+        int key = cpu.getRegisters().getRegister(register);
 
         if (cpu.getKeyboard().isKeyPressed(key)) {
-            cpu.setPC((char)(cpu.getPC()+2));
+            cpu.skipNextInstruction();
         }
     }
 

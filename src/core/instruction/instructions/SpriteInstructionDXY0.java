@@ -16,7 +16,7 @@ public class SpriteInstructionDXY0 extends Instruction {
 
     @Override
     public void execute() {
-        cpu.getRegisters().setRegister(0xF, (byte) 0); // Reset Collision Flag
+        cpu.getRegisters().setRegister(0xF, 0); // Reset Collision Flag
         final int pixelWidth = 8; // Sprites are always 8 pixels wide
 
         Display display = cpu.getDisplay();
@@ -28,18 +28,21 @@ public class SpriteInstructionDXY0 extends Instruction {
         int yCoordinate = cpu.getRegisters().getRegister(registerY) & 0xFF;
 
         for (int row = 0; row < height; row++) {
-            int spriteByte = cpu.getMemory().read((char) (cpu.getI() + row)); // (cpu.getI() + row) is address
+            int spriteByte = cpu.getMemory().read( (cpu.getI() + row)); // (cpu.getI() + row) is address
 
             for (int column = 0; column < pixelWidth; column++) {
                 if ((spriteByte & (0x80 >> column)) != 0) {
-                    int x = (column + xCoordinate) % display.getWidth();
-                    int y = (row + yCoordinate) % display.getHeight();
-                    boolean currentPixel = cpu.getDisplay().getPixel(x, y);
+                    // Wrap coordinates around the screen
+                    int screenX = (xCoordinate + column) % display.getWidth();
+                    int screenY = (yCoordinate + row) % display.getHeight();
 
-                    if (currentPixel) {
-                        cpu.getRegisters().setRegister(0xF, (byte) 1); // Set collision flag
+                    boolean currentPixelState = cpu.getDisplay().getPixel(screenX, screenY);
+
+                    if (currentPixelState) { // Collision if drawing on an already set pixel
+                        cpu.getRegisters().setRegister(0xF, 1); // Set collision flag
                     }
-                    cpu.getDisplay().setPixel(x, y, currentPixel ^ true);
+                    // XOR the pixel state and update the display
+                    cpu.getDisplay().setPixel(screenX, screenY, !currentPixelState);
                 }
             }
         }

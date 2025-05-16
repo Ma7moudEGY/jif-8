@@ -14,8 +14,8 @@ public class OrInstruction8XY1 extends Instruction {
     @Override
     public void execute() {
         // Implementation will perform OR operation between registers
-        byte valueX = cpu.getRegisters().getRegister(registerX);
-        byte valueY = cpu.getRegisters().getRegister(registerY);
+        int valueX = cpu.getRegisters().getRegister(registerX);
+        int valueY = cpu.getRegisters().getRegister(registerY);
         cpu.getRegisters().setRegister(registerX, (byte) (valueX | valueY));
     }
 

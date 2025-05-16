@@ -12,7 +12,7 @@ public class MovInstruction8XY0 extends Instruction {
     }
 
     public void execute() {
-        byte source = cpu.getRegisters().getRegister(sourceRegister);
+        int source = cpu.getRegisters().getRegister(sourceRegister);
         cpu.getRegisters().setRegister(destinationRegister, source);
     }
 

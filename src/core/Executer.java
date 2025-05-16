@@ -8,9 +8,9 @@ public class Executer {
     }
 
     public void execute(Instruction instruction) {
-        System.out.println("Executing instruction...");
+        // System.out.println("Executing instruction..."); // Verbose log
         instruction.execute();
-        System.out.printf("Instruction: %s\n", instruction.toString());
+        // System.out.printf("Instruction: %s\n", instruction.toString()); // Verbose log
     }
 
 }

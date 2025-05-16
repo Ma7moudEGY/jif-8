@@ -11,7 +11,7 @@ public class SDelayInstructionFX15 extends Instruction {
 
     @Override
     public void execute() {
-        byte value = cpu.getRegisters().getRegister(register);
+        int value = cpu.getRegisters().getRegister(register);
         cpu.setDelayTimer(value);
     }
 

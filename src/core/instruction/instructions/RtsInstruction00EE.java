@@ -9,9 +9,8 @@ public class RtsInstruction00EE extends Instruction {
 
     public void execute() {
         // Logic to return from a subroutine
-        // Assuming stack is a field in the CPU class
-        // stack.pop();
-        cpu.setPC(cpu.getStack().pop());
+        int returnAddress = cpu.getStack().pop();
+        cpu.setPC(returnAddress); // setPC also sets pcShouldIncrement = false
     }
 
     @Override

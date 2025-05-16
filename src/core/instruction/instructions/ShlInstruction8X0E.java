@@ -12,9 +12,9 @@ public class ShlInstruction8X0E extends Instruction {
     @Override
     public void execute() {
         // Implementation will shift register left, bit 7 goes to VF
-        byte valueRegister = cpu.getRegisters().getRegister(register);
-        cpu.getRegisters().setRegister(15, (byte) (valueRegister & 0b10000000)); // Saving the most left bit to VF
-        cpu.getRegisters().setRegister(register, (byte) (valueRegister << 1));
+        int valueVx = cpu.getRegisters().getRegister(register) & 0xFF; // Ensure VX is 0-255
+        cpu.getRegisters().setRegister(0xF, (valueVx & 0x80) >> 7); // MSB of VX (0 or 1) to VF
+        cpu.getRegisters().setRegister(register, valueVx << 1);     // VX = VX << 1 (result masked by setRegister)
     }
 
     @Override

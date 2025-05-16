@@ -14,11 +14,10 @@ public class SkeqConstInstruction3XNN extends Instruction {
     @Override
     public void execute() {
         // Implementation will skip next instruction if VX equals NN
-        byte valueX = cpu.getRegisters().getRegister(register);
-        int PC = cpu.getPC();
-
-        if (valueX == (byte) value)
-            cpu.setPC(PC + 2);
+        int valueX = cpu.getRegisters().getRegister(register) & 0xFF; // Ensure VX is treated as 0-255
+        if (valueX == (value & 0xFF)) { // Ensure NN is treated as 0-255
+            cpu.skipNextInstruction(); // Advances PC by 2; main loop will add another 2
+        }
     }
 
     @Override

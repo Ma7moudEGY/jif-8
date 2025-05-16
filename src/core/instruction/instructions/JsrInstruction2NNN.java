@@ -11,7 +11,7 @@ public class JsrInstruction2NNN extends Instruction {
 
     public void execute() {
         // Logic to call a subroutine
-        System.out.println("Calling subroutine at address: " + address);
+        // System.out.println("Calling subroutine at address: " + address); // Removed for performance
         cpu.getStack().push(cpu.getPC());
         cpu.setPC((char) address);
     }

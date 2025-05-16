@@ -3,21 +3,20 @@ package core.instruction.instructions;
 import core.instruction.Instruction;
 
 public class SSoundInstructionFX18 extends Instruction {
-    private final char address;
+    private final int registerX; // VX, where X is from opcode 0xFX18
 
-    public SSoundInstructionFX18(char address) {
-        this.address = address;
+    public SSoundInstructionFX18(int registerX) {
+        this.registerX = registerX;
     }
 
     @Override
     public void execute() {
-        byte value = cpu.getRegisters().getRegister(address);
+        int value = cpu.getRegisters().getRegister(registerX);
         cpu.setSoundTimer(value);
     }
 
     @Override
     public String toString() {
-        return "SSOUND " + address;
+        return String.format("SSOUND V%X", registerX);
     }
-
 }

@@ -12,9 +12,9 @@ public class ShrInstruction8X06 extends Instruction {
     @Override
     public void execute() {
         // Implementation will shift register right, bit 0 goes to VF
-        byte valueRegister = cpu.getRegisters().getRegister(register);
-        cpu.getRegisters().setRegister(15, (byte) (valueRegister & 0b00000001)); // Saving the most right bit to VF
-        cpu.getRegisters().setRegister(register, (byte) (valueRegister >> 1));
+        int valueVx = cpu.getRegisters().getRegister(register) & 0xFF; // Ensure VX is 0-255
+        cpu.getRegisters().setRegister(0xF, valueVx & 0x1);       // LSB of VX to VF
+        cpu.getRegisters().setRegister(register, valueVx >> 1);    // VX = VX >> 1 (result masked by setRegister)
     }
 
     @Override

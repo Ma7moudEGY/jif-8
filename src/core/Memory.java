@@ -37,10 +37,10 @@ public class Memory {
    }
 
    public void loadFontSet() {
-      for (int i = 0x50; i < 0x9F; i++) {
-         RAM[i] = fontSet[i];
-      }
-   }
+    for (int i = 0; i < fontSet.length; i++) {
+        RAM[0x50 + i] = fontSet[i];
+    }
+}
 
    public byte get(int index) {
       return RAM[index];

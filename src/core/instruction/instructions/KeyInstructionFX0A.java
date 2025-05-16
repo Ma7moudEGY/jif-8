@@ -11,15 +11,17 @@ public class KeyInstructionFX0A extends Instruction {
 
     @Override
     public void execute() {
-        if (!cpu.getKeyboard().isWaitingForKey()) {
-
-            System.out.println("Waiting for key press.....");
-            cpu.getKeyboard().waitForKeyPress(key->{
-                cpu.getRegisters().setRegister(register, key);
-                cpu.setPC((char)(cpu.getPC()+2));
-            });
-            
-        }        
+        Integer keyPressed = cpu.getKeyboard().getPressedKeyAndStopWaiting();
+        if (keyPressed != null) {
+            cpu.getRegisters().setRegister(register, keyPressed);
+            // PC will be incremented by CPU.cycle() because pcShouldIncrement is true by default
+            System.out.println("FX0A: Key " + Integer.toHexString(keyPressed).toUpperCase() + " pressed, stored in V" + Integer.toHexString(register).toUpperCase());
+        } else {
+            // No key has been pressed yet (or one was pressed but not yet processed by a previous FX0A cycle)
+            cpu.getKeyboard().startWaitingForKey(); // Ensure keyboard knows we are waiting
+            cpu.preventPCIncrement(); // Halt PC advancement, so this instruction re-executes
+            // System.out.println("FX0A: Waiting for key press for V" + Integer.toHexString(register).toUpperCase() + "..."); // Removed for performance
+        }
     }
 
     @Override

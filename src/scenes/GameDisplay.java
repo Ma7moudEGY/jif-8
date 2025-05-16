@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 public class GameDisplay extends Canvas {
 
     private GraphicsContext gc;
-    private static Display display;
+    private Display display;
     private int scale = 10;
 
     public GameDisplay(Display display, int scale) {

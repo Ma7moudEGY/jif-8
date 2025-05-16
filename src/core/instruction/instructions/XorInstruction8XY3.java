@@ -14,9 +14,9 @@ public class XorInstruction8XY3 extends Instruction {
     @Override
     public void execute() {
         // Implementation will perform XOR operation between registers
-        byte valueX = cpu.getRegisters().getRegister(registerX);
-        byte valueY = cpu.getRegisters().getRegister(registerY);
-        cpu.getRegisters().setRegister(registerX, (byte) (valueX ^ valueY));
+        int valueX = cpu.getRegisters().getRegister(registerX);
+        int valueY = cpu.getRegisters().getRegister(registerY);
+        cpu.getRegisters().setRegister(registerX, (valueX ^ valueY));
     }
 
     @Override
