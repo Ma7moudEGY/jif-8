@@ -4,7 +4,7 @@ import core.instruction.Instruction;
 import core.instruction.InstructionFactory;
 
 public class Decoder {
-    protected Opcode opcode;
+    // protected Opcode opcode; // This field was unused
     private final InstructionFactory factory;
 
     public Decoder(CPU cpu) {

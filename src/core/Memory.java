@@ -28,18 +28,23 @@ public class Memory {
             (byte) 0xF0, (byte) 0x80, (byte) 0xF0, (byte) 0x80, (byte) 0x80 // F
       };
       System.out.println("Memory initialized");
+      // Load font set during initialization
+      loadFontSet();
    }
 
    public void reset() {
       for (int i = 0; i < RAM.length; i++) {
          RAM[i] = 0;
       }
+      // Reload font set on reset as RAM is cleared
+      loadFontSet();
    }
 
    public void loadFontSet() {
-      for (int i = 0x50; i < 0x9F; i++) {
-         RAM[i] = fontSet[i];
+      if (0x050 + fontSet.length > MEMORY_SIZE) {
+         throw new IllegalStateException("Font set too large or memory too small.");
       }
+      System.arraycopy(fontSet, 0, RAM, 0x050, fontSet.length);
    }
 
    public byte get(int index) {
@@ -59,6 +64,9 @@ public class Memory {
    }
 
    public byte read(int address) {
+      if (address < 0 || address >= RAM.length) { // Added lower bound check for completeness
+         throw new IllegalArgumentException("Memory address out of bounds: " + address);
+      }
       if (address >= RAM.length) {
          throw new IllegalArgumentException("Memory address out of bounds");
       }
@@ -66,6 +74,9 @@ public class Memory {
    }
 
    public void write(int address, int value) {
+      if (address < 0 || address >= RAM.length) { // Added lower bound check for completeness
+         throw new IllegalArgumentException("Memory address out of bounds: " + address);
+      }
       if (address >= RAM.length) {
          throw new IllegalArgumentException("Memory address out of bounds");
       }

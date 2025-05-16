@@ -21,7 +21,7 @@ public class App extends Application {
         gameLoop = new Timeline();
         gameLoop.setCycleCount(Timeline.INDEFINITE);
 
-        KeyFrame kf = new KeyFrame(Duration.millis((1000 / 25)), e -> {
+        KeyFrame kf = new KeyFrame(Duration.seconds(1.0 / 30.0), e -> {
             if (emulator.isRunning()) {
                 emulator.emulateCycle();
                 Scene currentScene = primaryStage.getScene();

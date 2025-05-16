@@ -19,6 +19,8 @@ public class CPU {
     private SoundSystem soundSystem;
     private Decoder decoder;
     private Executer executer;
+    private final Random randomGenerator;
+    private boolean soundWasPlaying; // To manage sound state transitions
 
     public CPU(Memory memory, Stack stack, Display display, Keyboard keyboard, SoundSystem soundSystem) {
         registers = new Registers();
@@ -30,6 +32,7 @@ public class CPU {
         this.soundSystem = soundSystem;
         decoder = new Decoder(this);
         executer = new Executer();
+        randomGenerator = new Random();
         reset();
     }
 
@@ -72,36 +75,65 @@ public class CPU {
         stack.reset();
         delayTimer = 0;
         soundTimer = 0;
-        memory.reset();
+        memory.reset(); // This should also call loadFontSet() if Memory.reset() clears everything
         display.reset();
         soundSystem.stopSound();
+        soundWasPlaying = false;
     }
 
     public void cycle() {
-        char instruction = fetch();
-        Instruction decodedInstruction = decoder.decode(instruction);
-        System.out.printf("EXECUTE: PC: 0x%03X, I: 0x%03X, Instruction: %s\n", (int) PC, (int) I,
-                decodedInstruction.toString());
+        char opcode = fetch(); // PC is at the current instruction
+
+        // Advance PC to the *next* instruction before execution.
+        // This simplifies PC handling for jumps, calls, and skips within execute().
+        // Jumps/Calls will set PC to target.
+        // Skips will add 2 more to PC (which is already advanced).
+        // Regular instructions don't touch PC.
+        int currentPCOnFetch = PC; // For logging
+        PC = (PC + 2) & 0xFFF;     // Advance PC for next cycle (unless execute changes it)
+
+        Instruction decodedInstruction = decoder.decode(opcode);
+        System.out.printf("EXECUTE: PC_fetched_at=0x%03X, Opcode=0x%04X, I: 0x%03X, Instruction: %s\n",
+                currentPCOnFetch, (int) opcode, (int) I, decodedInstruction.toString());
+        
         executer.execute(decodedInstruction);
-        PC += 2;
-        System.out.println("PC: " + PC);
+        // Note: Instructions like JMP, CALL, or conditional skips (if true)
+        // should modify the PC directly within their execute() method.
+        // For JMP/CALL, they set PC to the target address.
+        // For SKIPS, they would increment PC by another 2 if condition is met.
+
+        System.out.println("PC after execute: " + String.format("0x%03X", PC));
         updateTimers();
     }
 
     private void updateTimers() {
-        if (delayTimer > 0)
+        if (delayTimer > 0) {
             delayTimer--;
-        if (soundTimer > 0)
-            soundTimer--;
+        }
 
-        if (soundTimer == 0)
-            soundSystem.beeb();
+        boolean soundShouldBeActive = soundTimer > 0;
+
+        if (soundTimer > 0) {
+            soundTimer--;
+            if (soundTimer == 0) { // Timer just expired
+                soundShouldBeActive = false;
+            }
+        }
+
+        if (soundShouldBeActive && !soundWasPlaying) {
+            soundSystem.playSound(); // Start sound if it just became active
+        } else if (!soundShouldBeActive && soundWasPlaying) {
+            soundSystem.stopSound(); // Stop sound if it just became inactive
+        }
+        soundWasPlaying = soundShouldBeActive;
     }
 
     public char fetch() {
-        // Read high byte first, then low byte
-        char high = (char) (memory.RAM[PC] & 0xFF);
-        char low = (char) (memory.RAM[PC + 1] & 0xFF);
+        if (PC < 0 || PC + 1 >= Memory.getMemorySize()) {
+            throw new RuntimeException(String.format("Program Counter out of bounds during fetch: 0x%03X", PC));
+        }
+        char high = (char) (memory.read(PC) & 0xFF);
+        char low = (char) (memory.read(PC + 1) & 0xFF);
         char op = (char) ((high << 8) | low);
         System.out.printf("FETCH: PC=0x%03X, Opcode=0x%04X\n", PC, (int) op);
         return op;
@@ -140,6 +172,6 @@ public class CPU {
     }
 
     public byte generateRandomByte() {
-        return (byte) new Random().nextInt(256);
+        return (byte) randomGenerator.nextInt(256);
     }
 }

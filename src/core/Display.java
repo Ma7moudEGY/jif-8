@@ -28,11 +28,17 @@ public class Display {
 
     public void reset() {
         pixels = new boolean[width][height];
+        clearDrawFlag(); // Or drawFlag = false;
     }
 
     public void setPixel(int x, int y, boolean value) {
-        if (x < height && x >= 0 && y < width && y >= 0) {
+        // Assuming x is horizontal (0 to width-1) and y is vertical (0 to height-1)
+        // And pixels array is pixels[x_coord][y_coord] or pixels[col][row]
+        if (x >= 0 && x < width && y >= 0 && y < height) {
             pixels[x][y] = value;
+        } else {
+            // Optionally log or handle out-of-bounds, though CHIP-8 often wraps around.
+            // For strictness, current behavior (ignoring) is fine, or throw an error.
         }
     }
 
